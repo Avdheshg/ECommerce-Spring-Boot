@@ -3,13 +3,12 @@ package com.example.sp.ecommerce.service;
 import com.example.sp.ecommerce.model.Category;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.*;
 
 @Service
-public class CategoryServiceImplementation implements CategoryService
+public class CategoryServiceImpl implements CategoryService
 {
     private List<Category> categories = new ArrayList<Category>();
     private Long nextId = 1L;

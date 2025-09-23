@@ -1,28 +1,26 @@
 package com.example.sp.ecommerce.controller;
 
 import com.example.sp.ecommerce.model.Category;
-import com.example.sp.ecommerce.service.CategoryServiceImplementation;
+import com.example.sp.ecommerce.service.CategoryServiceImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-import org.springframework.web.servlet.function.EntityResponse;
 
 import java.util.List;
-import java.util.ArrayList;
 
 @RestController
 @RequestMapping("/api/v1")
 public class CategoryController
 {
-    private CategoryServiceImplementation categoryService;
+    private CategoryServiceImpl categoryService;
 
-    public CategoryController(CategoryServiceImplementation categoryService) {
+    public CategoryController(CategoryServiceImpl categoryService) {
         this.categoryService = categoryService;
     }
 
     @GetMapping("/public/category")
-    public ResponseEntity<List<Category>> getCategory()
+    public ResponseEntity<List<Category>> getAllCategory()
     {
         List<Category> categories = categoryService.getAllCategories();
         return new ResponseEntity<List<Category>>(categories, HttpStatus.OK);

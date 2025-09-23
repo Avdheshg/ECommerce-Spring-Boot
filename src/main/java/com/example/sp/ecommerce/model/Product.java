@@ -1,20 +1,18 @@
 package com.example.sp.ecommerce.model;
 
-import java.util.Random;
-
-public class Category
+public class  Product
 {
     private Long id;
     private String name;
+    private String category;
 
-    public Category(String name) {
-        this.id = new Random().nextLong();
-        this.name = name;
+    public Product() {
     }
 
-    public Category(Long id, String name) {
+    public Product(Long id, String name, String category) {
         this.id = id;
         this.name = name;
+        this.category = category;
     }
 
     public Long getId() {
@@ -33,11 +31,20 @@ public class Category
         this.name = name;
     }
 
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
     @Override
     public String toString() {
-        return "Category{" +
+        return "Product{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
+                ", category=" + category +
                 '}';
     }
 }
