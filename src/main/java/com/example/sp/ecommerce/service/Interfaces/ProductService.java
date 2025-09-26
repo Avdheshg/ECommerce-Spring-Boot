@@ -1,17 +1,15 @@
-package com.example.sp.ecommerce.service;
-
-import java.util.List;
+package com.example.sp.ecommerce.service.Interfaces;
 
 import com.example.sp.ecommerce.model.Product;
+
+import java.util.List;
 
 public interface ProductService
 {
     List<Product> getAllProducts();
     Product getProduct(Long id);
-
-    String addProduct(List<Product> product);
+    String addProduct(List<Product> products);
     String updateProduct(Product product, Long id);
-
     String removeProduct(Long id);
 
 }

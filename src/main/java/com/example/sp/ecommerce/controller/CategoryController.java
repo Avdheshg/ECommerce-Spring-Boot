@@ -26,6 +26,20 @@ public class CategoryController
         return new ResponseEntity<List<Category>>(categories, HttpStatus.OK);
     }
 
+    @GetMapping("/public/category/{categoryId}")
+    public ResponseEntity<String> getCategory(@PathVariable Long categoryId)
+    {
+        try
+        {
+            Category foundCategory = categoryService.getCategory(categoryId);
+            return new ResponseEntity<>(foundCategory.toString(), HttpStatus.OK);
+        }
+        catch (ResponseStatusException responseStatusException)
+        {
+            return new ResponseEntity<>(responseStatusException.getMessage(), responseStatusException.getStatusCode());
+        }
+    }
+
     @PostMapping("/admin/category")
     public ResponseEntity<String> createCategory(@RequestBody List<Category> category)
     {
@@ -48,12 +62,12 @@ public class CategoryController
     }
 
     @DeleteMapping("/admin/categories/byId/{categoryId}")
-    public ResponseEntity<String> deleteCategoryById(@PathVariable String categoryId)
+    public ResponseEntity<String> deleteCategoryById(@PathVariable Long categoryId)
     {
         try
         {
-            String result = categoryService.deleteCategory(Long.parseLong(categoryId));
-            return new ResponseEntity<>(result, HttpStatus.OK);
+            String result = categoryService.deleteCategory(categoryId);
+            return new ResponseEntity<>(result, HttpStatus.NO_CONTENT);
         }
         catch (ResponseStatusException responseStatusException)
         {

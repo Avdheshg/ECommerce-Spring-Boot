@@ -1,6 +1,5 @@
 package com.example.sp.ecommerce.controller;
 
-import com.example.sp.ecommerce.service.ProductService;
 import com.example.sp.ecommerce.service.ProductServiceImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +13,7 @@ import com.example.sp.ecommerce.model.Product;
 @RequestMapping("/api/v1")
 public class ProductController
 {
-    private ProductServiceImpl productService;
+    private final ProductServiceImpl productService;
 
     public ProductController(ProductServiceImpl productService)
     {
@@ -65,6 +64,7 @@ public class ProductController
     {
         try {
             String result = productService.removeProduct(productId);
+            System.out.println(result);
             return new ResponseEntity<>(result, HttpStatus.NO_CONTENT);
         } catch (ResponseStatusException responseStatusException) {
             return new ResponseEntity<>(responseStatusException.getMessage(), responseStatusException.getStatusCode());
