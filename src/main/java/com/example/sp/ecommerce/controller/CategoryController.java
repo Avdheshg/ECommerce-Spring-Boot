@@ -48,7 +48,7 @@ public class CategoryController
     }
 
     @DeleteMapping("/admin/categories/byName/{categoryName}")
-    public ResponseEntity<String> deleteCategory(@PathVariable String categoryName)
+    public ResponseEntity<String> deleteCategoryByName(@PathVariable String categoryName)
     {
         try
         {

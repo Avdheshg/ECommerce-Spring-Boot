@@ -4,10 +4,16 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Random;
 
 @Entity
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Category
 {
     @Id
@@ -15,41 +21,4 @@ public class Category
     private Long id;
     private String name;
 
-    public Category(String name) {
-        this.id = new Random().nextLong();
-        this.name = name;
-    }
-
-    public Category(Long id, String name) {
-        this.id = id;
-        this.name = name;
-    }
-
-    public Category() {
-
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    @Override
-    public String toString() {
-        return "Category{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                '}';
-    }
 }

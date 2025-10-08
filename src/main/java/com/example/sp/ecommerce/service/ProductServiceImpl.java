@@ -1,6 +1,7 @@
 package com.example.sp.ecommerce.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.example.sp.ecommerce.model.Product;
 import com.example.sp.ecommerce.respositories.ProductRepository;
@@ -8,6 +9,7 @@ import com.example.sp.ecommerce.service.Interfaces.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
@@ -23,14 +25,12 @@ public class ProductServiceImpl implements ProductService
     }
 
     @Override
-    public Product getProduct(Long id)
+    public Product getProduct(Long productId)
     {
-        List<Product> products = getAllProducts();
+        Optional<Product> optionalProduct = productRepository.findById(productId);
 
-        return products.stream()
-                .filter(product -> product.getId().equals(id))
-                .findFirst()
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.OK, "No product found for the given " + id));
+        return optionalProduct
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No product found for the given " + productId));
     }
 
     @Override
@@ -42,33 +42,24 @@ public class ProductServiceImpl implements ProductService
     }
 
     @Override
-    public String updateProduct(Product product, Long id)
+    public String updateProduct(Product product, Long productId)
     {
-        List<Product> products = productRepository.findAll();
-
-        Product foundProduct = products.stream()
-                .filter(pro -> pro.getId().equals(id))
-                .findFirst()
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Product with the Id: " + id + " not found!"));
+        Product foundProduct = getProduct(productId);
 
         foundProduct.setName(product.getName());
         productRepository.save(foundProduct);
 
-        return "Product with the Id: " + id + " updated successfully!";
+        return "Product with the Id: " + productId + " updated successfully!";
     }
 
     @Override
-    public String removeProduct(Long id)
+    public String removeProduct(Long productId)
     {
-        List<Product> products = productRepository.findAll();
-
-        Product foundProduct = products.stream()
-                .filter(product -> product.getId().equals(id))
-                .findFirst()
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Product with the Id: " + id + " not found!"));
+        Product foundProduct = getProduct(productId);
 
         productRepository.delete(foundProduct);
-        return "Product with the Id: " + id + " successfully updated!";
+
+        return "Product with the Id: " + productId + " successfully deleted!";
     }
 
 

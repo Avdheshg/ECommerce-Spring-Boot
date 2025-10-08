@@ -36,10 +36,9 @@ public class OrderServiceImpl implements OrderService
     {
         Optional<Orders> optionalOrder =  orderRepository.findById(orderId);
 
-        Orders foundOrder = optionalOrder
+        return optionalOrder
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No order found with the given Id: " + orderId));
 
-        return foundOrder;
     }
 
     @Override
@@ -59,7 +58,9 @@ public class OrderServiceImpl implements OrderService
     @Override
     public String deleteOrder(Long orderId)
     {
-        orderRepository.deleteById(orderId);
+        Orders foundOrders = getOrder(orderId);
+
+        orderRepository.delete(foundOrders);
 
         return "Order with Id: " + orderId + " deleted successfully!";
     }

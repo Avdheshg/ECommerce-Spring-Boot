@@ -22,6 +22,7 @@ public class OrderController
     @PostMapping("/public/orders")
     public ResponseEntity<String> createOrders(@RequestBody List<Orders> orders)
     {
+        System.out.println("Inside Create Orders...");
         return new ResponseEntity<>(orderService.createOrders(orders), HttpStatus.CREATED);
     }
 
