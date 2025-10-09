@@ -1,14 +1,12 @@
 package com.example.sp.ecommerce.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Entity
 @Data
@@ -19,10 +17,25 @@ public class Orders
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String product;
-    private double amount;
+
+    @NotNull
+    private Long productId;
+
+    @NotNull
+    private Integer productQuantity;
+
+    @NotNull
+    @Positive
+    private Double amount;
+
+    @NotBlank(message = "Shipping Address is mandatory")
     private String shippingAddress;
-    private String createdAt;
+
+    @NotNull
+    private LocalDateTime createdAt;
+
+    @NotBlank(message = "Name cannot be empty")
+    @Size(min = 2, max = 100, message = "Name should have at least 2 characters")
     private String customerName;
 
 }
