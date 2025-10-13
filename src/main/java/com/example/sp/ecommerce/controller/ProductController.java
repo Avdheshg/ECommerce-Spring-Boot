@@ -51,38 +51,22 @@ public class ProductController
     @GetMapping("/public/products/{productId}")
     public ResponseEntity<String> getProduct(@PathVariable Long productId)
     {
-        try
-        {
-            Product foundProduct = productService.getProductById(productId);
-            return new ResponseEntity<>(foundProduct.toString(), HttpStatus.OK);
-        }
-        catch (ResponseStatusException responseStatusException)
-        {
-            return new ResponseEntity<>(responseStatusException.getMessage(), responseStatusException.getStatusCode());
-        }
+        Product foundProduct = productService.getProductById(productId);
+        return new ResponseEntity<>(foundProduct.toString(), HttpStatus.OK);
     }
 
     @PatchMapping("/public/products/{productId}")
     public ResponseEntity<String> updateProduct(@RequestBody Product product, @PathVariable Long productId)
     {
-        try {
-            String result = productService.updateProduct(product, productId);
-            return new ResponseEntity<>(result, HttpStatus.OK);
-        } catch (ResponseStatusException responseStatusException) {
-            return new ResponseEntity<>(responseStatusException.getMessage(), responseStatusException.getStatusCode());
-        }
+        String result = productService.updateProduct(product, productId);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @DeleteMapping("/admin/products/{productId}")
     public ResponseEntity<String> deleteProduct(@PathVariable Long productId)
     {
-        try {
-            String result = productService.removeProduct(productId);
-            System.out.println(result);
-            return new ResponseEntity<>(result, HttpStatus.NO_CONTENT);
-        } catch (ResponseStatusException responseStatusException) {
-            return new ResponseEntity<>(responseStatusException.getMessage(), responseStatusException.getStatusCode());
-        }
+        String result = productService.removeProduct(productId);
+        return new ResponseEntity<>(result, HttpStatus.NO_CONTENT);
     }
 
 }

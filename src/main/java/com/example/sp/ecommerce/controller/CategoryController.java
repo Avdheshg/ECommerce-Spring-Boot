@@ -31,15 +31,8 @@ public class CategoryController
     @GetMapping("/public/category/{categoryId}")
     public ResponseEntity<String> getCategory(@PathVariable Long categoryId)
     {
-        try
-        {
-            Category foundCategory = categoryService.getCategoryById(categoryId);
-            return new ResponseEntity<>(foundCategory.toString(), HttpStatus.OK);
-        }
-        catch (ResponseStatusException responseStatusException)
-        {
-            return new ResponseEntity<>(responseStatusException.getMessage(), responseStatusException.getStatusCode());
-        }
+        Category foundCategory = categoryService.getCategoryById(categoryId);
+        return new ResponseEntity<>(foundCategory.toString(), HttpStatus.OK);
     }
 
     @PostMapping("/admin/categories")
@@ -61,43 +54,22 @@ public class CategoryController
     @DeleteMapping("/admin/categories/byName/{categoryName}")
     public ResponseEntity<String> deleteCategoryByName(@PathVariable String categoryName)
     {
-        try
-        {
-            String result = categoryService.deleteCategoryByName(categoryName);
-            return new ResponseEntity<>(result, HttpStatus.OK);
-        }
-        catch (ResponseStatusException responseStatusException)
-        {
-            return new ResponseEntity<>(responseStatusException.getReason(), responseStatusException.getStatusCode());
-        }
+        String result = categoryService.deleteCategoryByName(categoryName);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @DeleteMapping("/admin/categories/byId/{categoryId}")
     public ResponseEntity<String> deleteCategoryById(@PathVariable Long categoryId)
     {
-        try
-        {
-            String result = categoryService.deleteCategoryById(categoryId);
-            return new ResponseEntity<>(result, HttpStatus.NO_CONTENT);
-        }
-        catch (ResponseStatusException responseStatusException)
-        {
-            return new ResponseEntity<>(responseStatusException.getMessage(), responseStatusException.getStatusCode());
-        }
+        String result = categoryService.deleteCategoryById(categoryId);
+        return new ResponseEntity<>(result, HttpStatus.NO_CONTENT);
     }
 
     @PutMapping("/admin/categories/{categoryId}")
     public ResponseEntity<String> updateCategory(@RequestBody Category category, @PathVariable Long categoryId)
     {
-        try
-        {
-            Category savedCategory = categoryService.updateCategory(category, categoryId);
-            return new ResponseEntity<>(category.getName() + " saved successfully!", HttpStatus.OK);
-        }
-        catch (ResponseStatusException responseStatusException)
-        {
-            return new ResponseEntity<>(responseStatusException.getMessage(), responseStatusException.getStatusCode());
-        }
+        Category savedCategory = categoryService.updateCategory(category, categoryId);
+        return new ResponseEntity<>(category.getName() + " saved successfully!", HttpStatus.OK);
     }
 
 }

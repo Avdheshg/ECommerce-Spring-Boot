@@ -41,14 +41,7 @@ public class OrderController
     @PatchMapping("/public/orders/{orderId}")
     public ResponseEntity<String> updateOrder(@RequestBody Orders orders, @PathVariable Long orderId)
     {
-        try
-        {
-            return new ResponseEntity<>(orderService.updateOrder(orders, orderId), HttpStatus.OK);
-        }
-        catch (ResponseStatusException responseStatusException)
-        {
-            return new ResponseEntity<>(responseStatusException.getMessage(), responseStatusException.getStatusCode());
-        }
+        return new ResponseEntity<>(orderService.updateOrder(orders, orderId), HttpStatus.OK);
     }
 
     @GetMapping("/public/orders")
@@ -60,14 +53,7 @@ public class OrderController
     @DeleteMapping("/public/orders/{orderId}")
     public ResponseEntity<String> deleteOrder(@PathVariable Long orderId)
     {
-        try
-        {
-            return new ResponseEntity<>(orderService.deleteOrder(orderId), HttpStatus.NO_CONTENT);
-        }
-        catch (ResponseStatusException responseStatusException)
-        {
-            return new ResponseEntity<>(responseStatusException.getMessage(), responseStatusException.getStatusCode());
-        }
+        return new ResponseEntity<>(orderService.deleteOrder(orderId), HttpStatus.NO_CONTENT);
     }
 
 
