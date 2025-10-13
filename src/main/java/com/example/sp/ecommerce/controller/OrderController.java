@@ -2,11 +2,14 @@ package com.example.sp.ecommerce.controller;
 
 import com.example.sp.ecommerce.model.Orders;
 import com.example.sp.ecommerce.service.OrderServiceImpl;
+import jakarta.persistence.criteria.Order;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -20,10 +23,19 @@ public class OrderController
     }
 
     @PostMapping("/public/orders")
-    public ResponseEntity<String> createOrders(@RequestBody List<Orders> orders)
+    public ResponseEntity<String> createOrders(@Valid @RequestBody List<Orders> orders)
     {
         System.out.println("Inside Create Orders...");
         return new ResponseEntity<>(orderService.createOrders(orders), HttpStatus.CREATED);
+    }
+
+    @PostMapping("/public/order")
+    public ResponseEntity<String> createOrder(@Valid @RequestBody Orders order)
+    {
+        System.out.println("Inside Create Orders...");
+        List<Orders> list = new ArrayList<>();
+        list.add(order);
+        return new ResponseEntity<>(orderService.createOrders(list), HttpStatus.CREATED);
     }
 
     @PatchMapping("/public/orders/{orderId}")

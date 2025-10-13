@@ -1,10 +1,13 @@
 package com.example.sp.ecommerce.controller;
 
 import com.example.sp.ecommerce.service.ProductServiceImpl;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import com.example.sp.ecommerce.model.Product;
@@ -20,6 +23,24 @@ public class ProductController
         this.productService = productService;
     }
 
+    @PostMapping("/public/products")
+    public ResponseEntity<String> addProducts(@Valid @RequestBody List<Product> products)
+    {
+        System.out.println("Inside POST of MULTIPLE products");
+        String result = productService.addProduct(products);
+        return new ResponseEntity<>(result, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/public/product")
+    public ResponseEntity<String> addProducts(@Valid @RequestBody Product product)
+    {
+        System.out.println("Inside POST of products");
+        List<Product> products = new ArrayList<>();
+        products.add(product);
+        String result = productService.addProduct(products);
+        return new ResponseEntity<>(result, HttpStatus.CREATED);
+    }
+
     @GetMapping("/public/products")
     public ResponseEntity<List<Product>> getAllProducts()
     {
@@ -32,20 +53,13 @@ public class ProductController
     {
         try
         {
-            Product foundProduct = productService.getProduct(productId);
+            Product foundProduct = productService.getProductById(productId);
             return new ResponseEntity<>(foundProduct.toString(), HttpStatus.OK);
         }
         catch (ResponseStatusException responseStatusException)
         {
             return new ResponseEntity<>(responseStatusException.getMessage(), responseStatusException.getStatusCode());
         }
-    }
-
-    @PostMapping("/public/products")
-    public ResponseEntity<String> addProducts(@RequestBody List<Product> products)
-    {
-        String result = productService.addProduct(products);
-        return new ResponseEntity<>(result, HttpStatus.CREATED);
     }
 
     @PatchMapping("/public/products/{productId}")

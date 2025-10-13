@@ -10,7 +10,7 @@ public interface OrderService
     String updateOrder(Orders orders, Long orderId);
 
     List<Orders> getAllOrders();
-    Orders getOrder(Long orderId);
+    Orders getOrderById(Long orderId);
 
     String deleteOrder(Long orderId);
 }

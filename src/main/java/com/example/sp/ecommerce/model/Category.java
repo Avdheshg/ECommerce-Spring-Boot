@@ -1,9 +1,6 @@
 package com.example.sp.ecommerce.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -24,6 +21,7 @@ public class Category
 
     @NotBlank
     @Size(min=2, message = "Name should have at least 2 characters")
+    @Column(unique = true)
     private String name;
 
 }

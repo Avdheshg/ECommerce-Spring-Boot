@@ -28,13 +28,13 @@ public class Orders
     @Positive
     private Double amount;
 
-    @NotBlank(message = "Shipping Address is mandatory")
+    @NotBlank
     private String shippingAddress;
 
     @NotNull
     private LocalDateTime createdAt;
 
-    @NotBlank(message = "Name cannot be empty")
+    @NotBlank
     @Size(min = 2, max = 100, message = "Name should have at least 2 characters")
     private String customerName;
 

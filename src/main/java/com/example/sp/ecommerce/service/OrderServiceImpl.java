@@ -1,5 +1,6 @@
 package com.example.sp.ecommerce.service;
 
+import com.example.sp.ecommerce.exceptions.ResourceNotFoundException;
 import com.example.sp.ecommerce.respositories.OrderRepository;
 import com.example.sp.ecommerce.service.Interfaces.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,23 +29,30 @@ public class OrderServiceImpl implements OrderService
     @Override
     public List<Orders> getAllOrders()
     {
-        return orderRepository.findAll();
+        List<Orders> orders =  orderRepository.findAll();
+
+        if (orders.isEmpty())
+        {
+            throw new ResourceNotFoundException("No Orders present!!");
+        }
+
+        return orders;
     }
 
     @Override
-    public Orders getOrder(Long orderId)
+    public Orders getOrderById(Long orderId)
     {
         Optional<Orders> optionalOrder =  orderRepository.findById(orderId);
 
         return optionalOrder
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No order found with the given Id: " + orderId));
+                .orElseThrow(() -> new ResourceNotFoundException("Order", "Id", orderId));
 
     }
 
     @Override
     public String updateOrder(Orders orders, Long orderId)
     {
-        Orders foundOrders = getOrder(orderId);
+        Orders foundOrders = getOrderById(orderId);
 
         if (orders.getCustomerName().isBlank() == false)
         {
@@ -58,7 +66,7 @@ public class OrderServiceImpl implements OrderService
     @Override
     public String deleteOrder(Long orderId)
     {
-        Orders foundOrders = getOrder(orderId);
+        Orders foundOrders = getOrderById(orderId);
 
         orderRepository.delete(foundOrders);
 

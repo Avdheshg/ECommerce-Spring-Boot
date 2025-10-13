@@ -18,14 +18,15 @@ public class  Product
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "Name is mandatory")
+    @NotBlank
+    @Column(unique = true)
     private String name;
 
-    @ManyToOne
+    @NotNull
     @JoinColumn(name = "CategoryId", nullable = false)
-    private Category category;
+    private Long categoryId;
 
-    @NotNull(message = "The stock quantity must be more than 0")
+    @NotNull
     private Integer stockQuantity;
 
 }
