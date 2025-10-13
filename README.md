@@ -43,6 +43,8 @@ A robust backend API for managing products, categories, and orders in an eCommer
 - Spring Web
 - Spring Data JPA
 - Jakarta Validation
+- Maven
+- H2 DB
 - Lombok
 
 ## API Endpoints Overview
