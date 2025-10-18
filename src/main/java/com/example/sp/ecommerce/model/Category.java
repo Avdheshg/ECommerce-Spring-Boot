@@ -24,4 +24,7 @@ public class Category
     @Column(unique = true)
     private String name;
 
+    public Category(String name) {
+        this.name = name;
+    }
 }

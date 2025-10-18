@@ -1,14 +1,13 @@
 package com.example.sp.ecommerce.service;
 
-import com.example.sp.ecommerce.exceptions.APIException;
 import com.example.sp.ecommerce.exceptions.ResourceNotFoundException;
 import com.example.sp.ecommerce.model.Category;
+import com.example.sp.ecommerce.payload.category.CategoryDTO;
+import com.example.sp.ecommerce.payload.category.CategoryResponse;
 import com.example.sp.ecommerce.respositories.CategoryRepository;
 import com.example.sp.ecommerce.service.Interfaces.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.*;
 
@@ -19,7 +18,7 @@ public class CategoryServiceImpl implements CategoryService
     private CategoryRepository categoryRepository;
 
     @Override
-    public List<Category> getAllCategories() {
+    public CategoryResponse getAllCategories() {
         List<Category> categories = categoryRepository.findAll();
 
         if (categories.isEmpty())
@@ -27,10 +26,9 @@ public class CategoryServiceImpl implements CategoryService
             throw new ResourceNotFoundException("No Categories present!!");
         }
 
-        return categories;
+        return getCategoryResponseFromCategories(categories);
     }
 
-    @Override
     public Category getCategoryById(Long categoryId)
     {
         Optional<Category> optionalCategory = categoryRepository.findById(categoryId);
@@ -40,17 +38,23 @@ public class CategoryServiceImpl implements CategoryService
     }
 
     @Override
-    public String createCategory(List<Category> categoryList) {
-        categoryRepository.saveAll(categoryList);
+    public CategoryDTO getCategoryDTOById(Long categoryId)
+    {
+        return getCategoryDTOFromCategory(getCategoryById(categoryId));
+    }
+
+    @Override
+    public String createCategory(List<CategoryDTO> categoriesDTO) {
+        List<Category> categories = getCategoriesFromCategoryDTO(categoriesDTO);
+
+        categoryRepository.saveAll(categories);
         return "Category added successfully";
     }
 
     @Override
     public String deleteCategoryById(Long categoryId)
     {
-        Category foundCategory = getCategoryById(categoryId);
-
-        categoryRepository.delete(foundCategory);
+        categoryRepository.deleteById(categoryId);
 
         return "Category with ID " + categoryId + " deleted successfully";
     }
@@ -71,12 +75,50 @@ public class CategoryServiceImpl implements CategoryService
     }
 
     @Override
-    public Category updateCategory(Category category, Long categoryId)
+    public CategoryDTO updateCategory(CategoryDTO categoryDTO, Long categoryDTOId)
     {
-        Category foundCategory = getCategoryById(categoryId);
+        Category foundCategory = getCategoryById(categoryDTOId);
 
-        foundCategory.setName(category.getName());
-        return categoryRepository.save(foundCategory);
+        foundCategory.setName(categoryDTO.getName());
+        categoryRepository.save(foundCategory);
+        return getCategoryDTOFromCategory(foundCategory);
     }
 
+    private Category getCategoryFromDTO(CategoryDTO categoryDTO)
+    {
+        return new Category(categoryDTO.getId(), categoryDTO.getName());
+    }
+
+    private CategoryDTO getCategoryDTOFromCategory(Category category)
+    {
+        return new CategoryDTO(category.getId(), category.getName());
+    }
+
+    private List<Category> getCategoriesFromCategoryDTO(List<CategoryDTO> categoriesDTO)
+    {
+        return categoriesDTO.stream()
+                .map(categoryDTO -> new Category(categoryDTO.getName()))
+                .toList();
+    }
+
+    private CategoryResponse getCategoryResponseFromCategories(List<Category> categories)
+    {
+        CategoryResponse categoryResponse = new CategoryResponse();
+
+        categoryResponse.setData(categories.stream()
+                .map(category -> new CategoryDTO(category.getId(), category.getName()))
+                .toList());
+
+        categoryResponse.setTotalCategories(categories.size());
+
+        return categoryResponse;
+    }
+
+    private CategoryResponse getCategoryResponseFromCategory(Category category)
+    {
+        List<Category> categories = new ArrayList<>();
+        categories.add(category);
+
+        return getCategoryResponseFromCategories(categories);
+    }
 }

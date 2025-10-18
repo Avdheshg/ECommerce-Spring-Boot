@@ -1,13 +1,14 @@
 package com.example.sp.ecommerce.controller;
 
-import com.example.sp.ecommerce.model.Orders;
+import com.example.sp.ecommerce.model.Order;
+import com.example.sp.ecommerce.payload.order.OrderDTO;
+import com.example.sp.ecommerce.payload.order.OrderResponse;
 import com.example.sp.ecommerce.service.OrderServiceImpl;
-import jakarta.persistence.criteria.Order;
 import jakarta.validation.Valid;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,31 +24,35 @@ public class OrderController
     }
 
     @PostMapping("/public/orders")
-    public ResponseEntity<String> createOrders(@Valid @RequestBody List<Orders> orders)
+    public ResponseEntity<String> createOrders(@Valid @RequestBody List<OrderDTO> orderDTOs)
     {
-        System.out.println("Inside Create Orders...");
-        return new ResponseEntity<>(orderService.createOrders(orders), HttpStatus.CREATED);
+        return new ResponseEntity<>(orderService.createOrders(orderDTOs), HttpStatus.CREATED);
     }
 
     @PostMapping("/public/order")
-    public ResponseEntity<String> createOrder(@Valid @RequestBody Orders order)
+    public ResponseEntity<String> createOrder(@Valid @RequestBody OrderDTO orderDTO)
     {
-        System.out.println("Inside Create Orders...");
-        List<Orders> list = new ArrayList<>();
-        list.add(order);
+        List<OrderDTO> list = new ArrayList<>();
+        list.add(orderDTO);
         return new ResponseEntity<>(orderService.createOrders(list), HttpStatus.CREATED);
     }
 
-    @PatchMapping("/public/orders/{orderId}")
-    public ResponseEntity<String> updateOrder(@RequestBody Orders orders, @PathVariable Long orderId)
-    {
-        return new ResponseEntity<>(orderService.updateOrder(orders, orderId), HttpStatus.OK);
-    }
-
     @GetMapping("/public/orders")
-    public ResponseEntity<List<Orders>> getAllOrders()
+    public ResponseEntity<OrderResponse> getAllOrders()
     {
         return new ResponseEntity<>(orderService.getAllOrders(), HttpStatus.OK);
+    }
+
+    @GetMapping("/public/order/{orderId}")
+    public ResponseEntity<OrderDTO> getOrderById(@PathVariable Long orderId)
+    {
+        return new ResponseEntity<>(orderService.getOrderDTOById(orderId), HttpStatus.OK);
+    }
+
+    @PatchMapping("/public/orders/{orderId}")
+    public ResponseEntity<OrderDTO> updateOrder(@RequestBody OrderDTO orderDTO, @PathVariable Long orderId)
+    {
+        return new ResponseEntity<>(orderService.updateOrder(orderDTO, orderId), HttpStatus.OK);
     }
 
     @DeleteMapping("/public/orders/{orderId}")

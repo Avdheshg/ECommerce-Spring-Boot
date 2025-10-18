@@ -1,5 +1,7 @@
 package com.example.sp.ecommerce.controller;
 
+import com.example.sp.ecommerce.payload.product.ProductDTO;
+import com.example.sp.ecommerce.payload.product.ProductResponse;
 import com.example.sp.ecommerce.service.ProductServiceImpl;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -32,9 +34,8 @@ public class ProductController
     }
 
     @PostMapping("/public/product")
-    public ResponseEntity<String> addProducts(@Valid @RequestBody Product product)
+    public ResponseEntity<String> addProduct(@Valid @RequestBody Product product)
     {
-        System.out.println("Inside POST of products");
         List<Product> products = new ArrayList<>();
         products.add(product);
         String result = productService.addProduct(products);
@@ -42,24 +43,24 @@ public class ProductController
     }
 
     @GetMapping("/public/products")
-    public ResponseEntity<List<Product>> getAllProducts()
+    public ResponseEntity<ProductResponse> getAllProducts()
     {
-        List<Product> allProducts = productService.getAllProducts();
-        return new ResponseEntity<>(allProducts, HttpStatus.OK);
+        ProductResponse productResponse = productService.getAllProducts();
+        return new ResponseEntity<ProductResponse>(productResponse, HttpStatus.OK);
     }
 
     @GetMapping("/public/products/{productId}")
-    public ResponseEntity<String> getProduct(@PathVariable Long productId)
+    public ResponseEntity<ProductDTO> getProduct(@PathVariable Long productId)
     {
-        Product foundProduct = productService.getProductById(productId);
-        return new ResponseEntity<>(foundProduct.toString(), HttpStatus.OK);
+        ProductDTO foundProductDTO = productService.getProductById(productId);
+        return new ResponseEntity<>(foundProductDTO, HttpStatus.OK);
     }
 
-    @PatchMapping("/public/products/{productId}")
-    public ResponseEntity<String> updateProduct(@RequestBody Product product, @PathVariable Long productId)
+    @PutMapping("/public/products/{productId}")
+    public ResponseEntity<ProductDTO> updateProduct(@RequestBody ProductDTO product, @PathVariable Long productId)
     {
-        String result = productService.updateProduct(product, productId);
-        return new ResponseEntity<>(result, HttpStatus.OK);
+        ProductDTO productDTO = productService.updateProduct(product, productId);
+        return new ResponseEntity<>(productDTO, HttpStatus.OK);
     }
 
     @DeleteMapping("/admin/products/{productId}")

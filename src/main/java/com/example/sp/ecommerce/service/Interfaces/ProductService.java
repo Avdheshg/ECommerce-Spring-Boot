@@ -1,15 +1,17 @@
 package com.example.sp.ecommerce.service.Interfaces;
 
 import com.example.sp.ecommerce.model.Product;
+import com.example.sp.ecommerce.payload.product.ProductDTO;
+import com.example.sp.ecommerce.payload.product.ProductResponse;
 
 import java.util.List;
 
 public interface ProductService
 {
-    List<Product> getAllProducts();
-    Product getProductById(Long id);
+    ProductResponse getAllProducts();
+    ProductDTO getProductById(Long id);
     String addProduct(List<Product> products);
-    String updateProduct(Product product, Long id);
+    ProductDTO updateProduct(ProductDTO productDTO, Long id);
     String removeProduct(Long id);
 
 }

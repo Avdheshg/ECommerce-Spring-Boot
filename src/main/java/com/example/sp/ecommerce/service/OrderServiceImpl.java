@@ -1,17 +1,18 @@
 package com.example.sp.ecommerce.service;
 
 import com.example.sp.ecommerce.exceptions.ResourceNotFoundException;
+import com.example.sp.ecommerce.payload.order.OrderDTO;
+import com.example.sp.ecommerce.payload.order.OrderResponse;
 import com.example.sp.ecommerce.respositories.OrderRepository;
 import com.example.sp.ecommerce.service.Interfaces.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import com.example.sp.ecommerce.model.Orders;
-import org.springframework.web.server.ResponseStatusException;
+import com.example.sp.ecommerce.model.Order;
 
 @Service
 public class OrderServiceImpl implements OrderService
@@ -20,59 +21,78 @@ public class OrderServiceImpl implements OrderService
     private OrderRepository orderRepository;
 
     @Override
-    public String createOrders(List<Orders> orders)
+    public String createOrders(List<OrderDTO> orderDTOs)
     {
-        orderRepository.saveAll(orders);
+        orderRepository.saveAll(getOrdersFromDTOs(orderDTOs));
         return "Orders created!";
     }
 
     @Override
-    public List<Orders> getAllOrders()
+    public OrderResponse getAllOrders()
     {
-        List<Orders> orders =  orderRepository.findAll();
+        List<Order> orders =  orderRepository.findAll();
 
         if (orders.isEmpty())
         {
             throw new ResourceNotFoundException("No Orders present!!");
         }
 
-        return orders;
+        return getOrderResponseFromOrders(orders);
     }
 
-    @Override
-    public Orders getOrderById(Long orderId)
+    private Order getOrderById(Long orderId)
     {
-        Optional<Orders> optionalOrder =  orderRepository.findById(orderId);
+        Optional<Order> foundOrder = orderRepository.findById(orderId);
 
-        return optionalOrder
+        return foundOrder
                 .orElseThrow(() -> new ResourceNotFoundException("Order", "Id", orderId));
 
     }
 
     @Override
-    public String updateOrder(Orders orders, Long orderId)
+    public OrderDTO getOrderDTOById(Long orderId)
     {
-        Orders foundOrders = getOrderById(orderId);
+        return new OrderDTO(getOrderById(orderId));
+    }
 
-        if (orders.getCustomerName().isBlank() == false)
+    @Override
+    public OrderDTO updateOrder(OrderDTO orderDTO, Long orderId)
+    {
+        Order foundOrder = getOrderById(orderId);
+
+        if (orderDTO.getCustomerName().isBlank() == false)
         {
-            foundOrders.setCustomerName(orders.getCustomerName());
+            foundOrder.setCustomerName(orderDTO.getCustomerName());
         }
 
-        orderRepository.save(foundOrders);
-        return "Order updated successfully!";
+        return new OrderDTO(orderRepository.save(foundOrder));
     }
 
     @Override
     public String deleteOrder(Long orderId)
     {
-        Orders foundOrders = getOrderById(orderId);
-
-        orderRepository.delete(foundOrders);
+        orderRepository.deleteById(orderId);
 
         return "Order with Id: " + orderId + " deleted successfully!";
     }
 
+    private OrderResponse getOrderResponseFromOrders(List<Order> orders)
+    {
+        List<OrderDTO> orderDTOs = new ArrayList<>();
 
+        orderDTOs = orders.stream()
+                .map(order -> new OrderDTO(order))
+                .toList();
+
+        return new OrderResponse(orders.size(), orderDTOs);
+    }
+
+    private List<Order> getOrdersFromDTOs(List<OrderDTO> orderDTOs)
+    {
+        return orderDTOs.stream()
+                .map(orderDTO -> new Order(orderDTO))
+                .toList();
+
+    }
 
 }

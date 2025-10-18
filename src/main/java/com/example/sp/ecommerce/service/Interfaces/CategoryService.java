@@ -1,15 +1,16 @@
 package com.example.sp.ecommerce.service.Interfaces;
 
-import com.example.sp.ecommerce.model.Category;
+import com.example.sp.ecommerce.payload.category.CategoryDTO;
+import com.example.sp.ecommerce.payload.category.CategoryResponse;
 
 import java.util.List;
 
 public interface CategoryService
 {
-    List<Category> getAllCategories();
-    Category getCategoryById(Long categoryId);
-    String createCategory(List<Category> category);
+    CategoryResponse getAllCategories();
+    CategoryDTO getCategoryDTOById(Long categoryId);
+    String createCategory(List<CategoryDTO> category);
     String deleteCategoryById(Long id);
     String deleteCategoryByName(String name);
-    Category updateCategory(Category category, Long categoryId);
+    CategoryDTO updateCategory(CategoryDTO categoryDTO, Long categoryDTOId);
 }

@@ -1,16 +1,17 @@
 package com.example.sp.ecommerce.service.Interfaces;
 
-import com.example.sp.ecommerce.model.Orders;
+import com.example.sp.ecommerce.payload.order.OrderDTO;
+import com.example.sp.ecommerce.payload.order.OrderResponse;
 
 import java.util.List;
 
 public interface OrderService
 {
-    String createOrders(List<Orders> orders);
-    String updateOrder(Orders orders, Long orderId);
+    String createOrders(List<OrderDTO> orderDTOs);
+    OrderDTO updateOrder(OrderDTO orderDTO, Long orderId);
 
-    List<Orders> getAllOrders();
-    Orders getOrderById(Long orderId);
+    OrderResponse getAllOrders();
+    OrderDTO getOrderDTOById(Long orderId);
 
     String deleteOrder(Long orderId);
 }
