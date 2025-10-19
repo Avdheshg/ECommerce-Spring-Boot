@@ -6,6 +6,9 @@ import com.example.sp.ecommerce.payload.order.OrderResponse;
 import com.example.sp.ecommerce.respositories.OrderRepository;
 import com.example.sp.ecommerce.service.Interfaces.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -28,9 +31,12 @@ public class OrderServiceImpl implements OrderService
     }
 
     @Override
-    public OrderResponse getAllOrders()
+    public OrderResponse getAllOrders(Integer pageNumber, Integer pageSize)
     {
-        List<Order> orders =  orderRepository.findAll();
+        Pageable pageDetails = PageRequest.of(pageNumber, pageSize);
+        Page<Order> orderPage = orderRepository.findAll(pageDetails);
+
+        List<Order> orders =  orderPage.getContent();
 
         if (orders.isEmpty())
         {

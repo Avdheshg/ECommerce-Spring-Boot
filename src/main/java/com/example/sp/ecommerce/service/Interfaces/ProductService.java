@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface ProductService
 {
-    ProductResponse getAllProducts();
+    ProductResponse getAllProducts(Integer pageNumber, Integer pageSize);
     ProductDTO getProductById(Long id);
     String addProduct(List<Product> products);
     ProductDTO updateProduct(ProductDTO productDTO, Long id);

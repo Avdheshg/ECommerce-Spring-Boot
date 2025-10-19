@@ -12,6 +12,9 @@ import com.example.sp.ecommerce.payload.product.ProductResponse;
 import com.example.sp.ecommerce.respositories.ProductRepository;
 import com.example.sp.ecommerce.service.Interfaces.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -23,9 +26,12 @@ public class ProductServiceImpl implements ProductService
     private ProductRepository productRepository;
 
     @Override
-    public ProductResponse getAllProducts()
+    public ProductResponse getAllProducts(Integer pageNumber, Integer pageSize)
     {
-        List<Product> products = productRepository.findAll();
+        Pageable pageDetails = PageRequest.of(pageNumber, pageSize);
+        Page<Product> productPage =productRepository.findAll(pageDetails);
+
+        List<Product> products = productPage.getContent();
 
         if (products.isEmpty())
         {
@@ -55,7 +61,7 @@ public class ProductServiceImpl implements ProductService
     {
         productRepository.saveAll(products);
 
-        return "Product(s) added successfully!";
+        return "Products added successfully!";
     }
 
     @Override

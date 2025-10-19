@@ -10,7 +10,7 @@ public interface OrderService
     String createOrders(List<OrderDTO> orderDTOs);
     OrderDTO updateOrder(OrderDTO orderDTO, Long orderId);
 
-    OrderResponse getAllOrders();
+    OrderResponse getAllOrders(Integer pageNumber, Integer pageSize);
     OrderDTO getOrderDTOById(Long orderId);
 
     String deleteOrder(Long orderId);

@@ -38,9 +38,14 @@ public class OrderController
     }
 
     @GetMapping("/public/orders")
-    public ResponseEntity<OrderResponse> getAllOrders()
+    public ResponseEntity<OrderResponse> getAllOrders(
+            @RequestParam(name = "pageNumber", required = false) Integer pageNumber,
+            @RequestParam(name = "pageSize", required = false) Integer pageSize)
     {
-        return new ResponseEntity<>(orderService.getAllOrders(), HttpStatus.OK);
+        int number = pageNumber == null ? 0 : pageNumber;
+        int size = pageSize == null ? 10 : pageSize;
+
+        return new ResponseEntity<>(orderService.getAllOrders(number, size), HttpStatus.OK);
     }
 
     @GetMapping("/public/order/{orderId}")
