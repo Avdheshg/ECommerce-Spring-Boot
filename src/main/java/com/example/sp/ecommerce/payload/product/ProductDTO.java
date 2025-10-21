@@ -4,6 +4,7 @@ import com.example.sp.ecommerce.model.Product;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,6 +20,10 @@ public class ProductDTO
     private String name;
 
     @NotNull
+    @Positive
+    private Double amount;
+
+    @NotNull
     private Long categoryId;
 
     @NotNull
@@ -28,6 +33,7 @@ public class ProductDTO
     {
         this.id = product.getId();
         this.name = product.getName();
+        this.amount = product.getAmount();
         this.categoryId = product.getCategoryId();
         this.stockQuantity = product.getStockQuantity();
     }

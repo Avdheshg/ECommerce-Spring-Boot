@@ -14,6 +14,8 @@ public class CategoryDTO
 
     @NotEmpty
     private String name;
+
+
 }
 
 

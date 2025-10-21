@@ -1,5 +1,6 @@
 package com.example.sp.ecommerce.controller;
 
+import com.example.sp.ecommerce.config.AppConstants;
 import com.example.sp.ecommerce.payload.category.CategoryDTO;
 import com.example.sp.ecommerce.payload.category.CategoryResponse;
 import com.example.sp.ecommerce.service.CategoryServiceImpl;
@@ -23,13 +24,12 @@ public class CategoryController
 
     @GetMapping("/public/category")
     public ResponseEntity<CategoryResponse> getAllCategory(
-            @RequestParam(value = "pageNumber", required = false) Integer pageNumber,
-            @RequestParam(value = "pageSize", required = false) Integer pageSize)
+            @RequestParam(value = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
+            @RequestParam(value = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
+            @RequestParam(value = "sortBy", defaultValue = AppConstants.SORT_BY, required = false) String sortBy,
+            @RequestParam(value = "sortDir", defaultValue = AppConstants.SORT_DIR, required = false) String sortDir)
     {
-        int pageNum = (pageNumber == null) ? 0 : pageNumber;
-        int size = (pageSize == null) ? 20 : pageSize;
-
-        CategoryResponse categoryResponse = categoryService.getAllCategories(pageNum, size);
+        CategoryResponse categoryResponse = categoryService.getAllCategories(pageNumber, pageSize, sortBy, sortDir);
         return new ResponseEntity<CategoryResponse>(categoryResponse, HttpStatus.OK);
     }
 
@@ -43,7 +43,7 @@ public class CategoryController
     @PostMapping("/admin/categories")
     public ResponseEntity<String> createCategories(@RequestBody List<CategoryDTO> categories)
     {
-        String result = categoryService.createCategory(categories);
+        String result = categoryService.createCategories(categories);
         return new ResponseEntity<>(result, HttpStatus.CREATED);
     }
 
@@ -52,7 +52,7 @@ public class CategoryController
     {
         List<CategoryDTO> list = new ArrayList<>();
         list.add(category);
-        String result = categoryService.createCategory(list);
+        String result = categoryService.createCategories(list);
         return new ResponseEntity<>(result, HttpStatus.CREATED);
     }
 

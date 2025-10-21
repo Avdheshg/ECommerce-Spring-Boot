@@ -1,15 +1,18 @@
 package com.example.sp.ecommerce.service;
 
+import com.example.sp.ecommerce.config.AppConstants;
 import com.example.sp.ecommerce.exceptions.ResourceNotFoundException;
 import com.example.sp.ecommerce.model.Category;
 import com.example.sp.ecommerce.payload.category.CategoryDTO;
 import com.example.sp.ecommerce.payload.category.CategoryResponse;
 import com.example.sp.ecommerce.respositories.CategoryRepository;
 import com.example.sp.ecommerce.service.Interfaces.CategoryService;
+import com.example.sp.ecommerce.util.SortUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -17,23 +20,36 @@ import java.util.*;
 @Service
 public class CategoryServiceImpl implements CategoryService
 {
+
     @Autowired
     private CategoryRepository categoryRepository;
 
+    private final List<String> allowedFieldsForSorting = List.of("id", "name");
+
     @Override
-    public CategoryResponse getAllCategories(Integer pageNumber, Integer pageSize) {
+    public String createCategories(List<CategoryDTO> categoriesDTO) {
+        List<Category> categories = getCategoriesFromCategoryDTO(categoriesDTO);
 
-        Pageable pageDetails = PageRequest.of(pageNumber, pageSize);
-        Page<Category> categgoriesPage = categoryRepository.findAll(pageDetails);
+        categoryRepository.saveAll(categories);
+        return "Category added successfully";
+    }
 
-        List<Category> categories = categgoriesPage.getContent();
+    @Override
+    public CategoryResponse getAllCategories(Integer pageNumber, Integer pageSize, String sortBy, String sortDir)
+    {
+        Sort sort = SortUtils.getValidSort(sortBy, sortDir, allowedFieldsForSorting);
+
+        Pageable pageDetails = PageRequest.of(pageNumber, pageSize, sort);
+        Page<Category> categoriesPage = categoryRepository.findAll(pageDetails);
+
+        List<Category> categories = categoriesPage.getContent();
 
         if (categories.isEmpty())
         {
             throw new ResourceNotFoundException("No Categories present!!");
         }
 
-        return getCategoryResponseFromCategories(categories);
+        return getCategoryResponseFromCategories(categories, categoriesPage);
     }
 
     public Category getCategoryById(Long categoryId)
@@ -48,14 +64,6 @@ public class CategoryServiceImpl implements CategoryService
     public CategoryDTO getCategoryDTOById(Long categoryId)
     {
         return getCategoryDTOFromCategory(getCategoryById(categoryId));
-    }
-
-    @Override
-    public String createCategory(List<CategoryDTO> categoriesDTO) {
-        List<Category> categories = getCategoriesFromCategoryDTO(categoriesDTO);
-
-        categoryRepository.saveAll(categories);
-        return "Category added successfully";
     }
 
     @Override
@@ -108,24 +116,15 @@ public class CategoryServiceImpl implements CategoryService
                 .toList();
     }
 
-    private CategoryResponse getCategoryResponseFromCategories(List<Category> categories)
+    private CategoryResponse getCategoryResponseFromCategories(List<Category> categories, Page<Category> categoriesPage)
     {
-        CategoryResponse categoryResponse = new CategoryResponse();
 
-        categoryResponse.setData(categories.stream()
+        List<CategoryDTO> categoryDTOs = categories.stream()
                 .map(category -> new CategoryDTO(category.getId(), category.getName()))
-                .toList());
+                .toList();
 
-        categoryResponse.setTotalCategories(categories.size());
+        return new CategoryResponse(categoriesPage.getTotalElements(), categoriesPage.getNumber(), categoriesPage.getSize(), categoriesPage.getTotalPages(), categoriesPage.isLast(), categoryDTOs);
 
-        return categoryResponse;
     }
 
-    private CategoryResponse getCategoryResponseFromCategory(Category category)
-    {
-        List<Category> categories = new ArrayList<>();
-        categories.add(category);
-
-        return getCategoryResponseFromCategories(categories);
-    }
 }

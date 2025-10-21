@@ -1,5 +1,6 @@
 package com.example.sp.ecommerce.controller;
 
+import com.example.sp.ecommerce.config.AppConstants;
 import com.example.sp.ecommerce.model.Order;
 import com.example.sp.ecommerce.payload.order.OrderDTO;
 import com.example.sp.ecommerce.payload.order.OrderResponse;
@@ -39,13 +40,12 @@ public class OrderController
 
     @GetMapping("/public/orders")
     public ResponseEntity<OrderResponse> getAllOrders(
-            @RequestParam(name = "pageNumber", required = false) Integer pageNumber,
-            @RequestParam(name = "pageSize", required = false) Integer pageSize)
+            @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
+            @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE,  required = false) Integer pageSize,
+            @RequestParam(value = "sortBy", defaultValue = AppConstants.SORT_BY, required = false) String sortBy,
+            @RequestParam(value = "sortDir", defaultValue = AppConstants.SORT_DIR, required = false) String sortDir)
     {
-        int number = pageNumber == null ? 0 : pageNumber;
-        int size = pageSize == null ? 10 : pageSize;
-
-        return new ResponseEntity<>(orderService.getAllOrders(number, size), HttpStatus.OK);
+        return new ResponseEntity<>(orderService.getAllOrders(pageNumber, pageSize, sortBy, sortDir), HttpStatus.OK);
     }
 
     @GetMapping("/public/order/{orderId}")

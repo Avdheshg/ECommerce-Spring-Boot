@@ -11,10 +11,12 @@ import com.example.sp.ecommerce.payload.product.ProductDTO;
 import com.example.sp.ecommerce.payload.product.ProductResponse;
 import com.example.sp.ecommerce.respositories.ProductRepository;
 import com.example.sp.ecommerce.service.Interfaces.ProductService;
+import com.example.sp.ecommerce.util.SortUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -25,10 +27,14 @@ public class ProductServiceImpl implements ProductService
     @Autowired
     private ProductRepository productRepository;
 
+    private final List<String> allowedFieldsForSorting = List.of("id", "name", "amount", "stockQuantity");
+
     @Override
-    public ProductResponse getAllProducts(Integer pageNumber, Integer pageSize)
+    public ProductResponse getAllProducts(Integer pageNumber, Integer pageSize, String sortBy, String sortDir)
     {
-        Pageable pageDetails = PageRequest.of(pageNumber, pageSize);
+        Sort sort = SortUtils.getValidSort(sortBy, sortDir, allowedFieldsForSorting);
+
+        Pageable pageDetails = PageRequest.of(pageNumber, pageSize, sort);
         Page<Product> productPage =productRepository.findAll(pageDetails);
 
         List<Product> products = productPage.getContent();
@@ -38,7 +44,7 @@ public class ProductServiceImpl implements ProductService
             throw new ResourceNotFoundException("No Products present!!");
         }
 
-        return getProductResponseFromProducts(products);
+        return getProductResponseFromProducts(products, productPage);
     }
 
     @Override
@@ -85,18 +91,18 @@ public class ProductServiceImpl implements ProductService
 
     public Product getProductFromDTO(ProductDTO productDTO)
     {
-        return new Product(productDTO.getId(), productDTO.getName(), productDTO.getCategoryId(), productDTO.getStockQuantity());
+        return new Product(productDTO.getId(), productDTO.getName(), productDTO.getAmount(), productDTO.getCategoryId(), productDTO.getStockQuantity());
     }
 
-    public ProductResponse getProductResponseFromProducts(List<Product> products)
+    public ProductResponse getProductResponseFromProducts(List<Product> products, Page<Product> productPage)
     {
         List<ProductDTO> productsDTOs = new ArrayList<>();
 
         productsDTOs = products.stream()
-                .map(product -> new ProductDTO(product.getId(), product.getName(), product.getCategoryId(), product.getStockQuantity()))
+                .map(product -> new ProductDTO(product.getId(), product.getName(), product.getAmount(), product.getCategoryId(), product.getStockQuantity()))
                 .toList();
 
-        return new ProductResponse(productsDTOs.size(), productsDTOs);
+        return new ProductResponse(productPage.getTotalElements(), productPage.getNumber(), productPage.getSize(), productPage.getTotalPages(), productPage.isLast(), productsDTOs);
 
     }
 

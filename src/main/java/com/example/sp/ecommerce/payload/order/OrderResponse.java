@@ -11,6 +11,10 @@ import java.util.List;
 @AllArgsConstructor
 public class OrderResponse
 {
-    private int totalOrders;
+    private long totalOrders;
+    private int pageNumber;
+    private int pageSize;
+    private int totalPages;
+    private boolean isLastPage;
     private List<OrderDTO> orderDTOList;
 }

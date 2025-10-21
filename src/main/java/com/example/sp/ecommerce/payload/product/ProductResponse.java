@@ -14,8 +14,11 @@ import java.util.List;
 @AllArgsConstructor
 public class ProductResponse
 {
-    private int totalOrders;
-
+    private long totalProducts;
+    private int pageNumber;
+    private int pageSize;
+    private int totalPages;
+    private boolean isLastPage;
     private List<ProductDTO> productDTOs = new ArrayList<>();
 
 }

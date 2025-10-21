@@ -5,10 +5,12 @@ import com.example.sp.ecommerce.payload.order.OrderDTO;
 import com.example.sp.ecommerce.payload.order.OrderResponse;
 import com.example.sp.ecommerce.respositories.OrderRepository;
 import com.example.sp.ecommerce.service.Interfaces.OrderService;
+import com.example.sp.ecommerce.util.SortUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -23,6 +25,8 @@ public class OrderServiceImpl implements OrderService
     @Autowired
     private OrderRepository orderRepository;
 
+    private List<String> allowedFieldsForSorting = List.of("id", "productQuantity", "amount");
+
     @Override
     public String createOrders(List<OrderDTO> orderDTOs)
     {
@@ -31,9 +35,11 @@ public class OrderServiceImpl implements OrderService
     }
 
     @Override
-    public OrderResponse getAllOrders(Integer pageNumber, Integer pageSize)
+    public OrderResponse getAllOrders(Integer pageNumber, Integer pageSize, String sortBy, String sortDir)
     {
-        Pageable pageDetails = PageRequest.of(pageNumber, pageSize);
+        Sort sort = SortUtils.getValidSort(sortBy, sortDir, allowedFieldsForSorting);
+
+        Pageable pageDetails = PageRequest.of(pageNumber, pageSize, sort);
         Page<Order> orderPage = orderRepository.findAll(pageDetails);
 
         List<Order> orders =  orderPage.getContent();
@@ -43,7 +49,7 @@ public class OrderServiceImpl implements OrderService
             throw new ResourceNotFoundException("No Orders present!!");
         }
 
-        return getOrderResponseFromOrders(orders);
+        return getOrderResponseFromOrders(orders, orderPage);
     }
 
     private Order getOrderById(Long orderId)
@@ -82,7 +88,7 @@ public class OrderServiceImpl implements OrderService
         return "Order with Id: " + orderId + " deleted successfully!";
     }
 
-    private OrderResponse getOrderResponseFromOrders(List<Order> orders)
+    private OrderResponse getOrderResponseFromOrders(List<Order> orders, Page<Order> orderPage)
     {
         List<OrderDTO> orderDTOs = new ArrayList<>();
 
@@ -90,7 +96,7 @@ public class OrderServiceImpl implements OrderService
                 .map(order -> new OrderDTO(order))
                 .toList();
 
-        return new OrderResponse(orders.size(), orderDTOs);
+        return new OrderResponse(orderPage.getTotalElements(), orderPage.getNumber(), orderPage.getSize(), orderPage.getTotalPages(), orderPage.isLast(), orderDTOs);
     }
 
     private List<Order> getOrdersFromDTOs(List<OrderDTO> orderDTOs)

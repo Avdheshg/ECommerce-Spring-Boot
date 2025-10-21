@@ -1,5 +1,6 @@
 package com.example.sp.ecommerce.controller;
 
+import com.example.sp.ecommerce.config.AppConstants;
 import com.example.sp.ecommerce.payload.product.ProductDTO;
 import com.example.sp.ecommerce.payload.product.ProductResponse;
 import com.example.sp.ecommerce.service.ProductServiceImpl;
@@ -44,13 +45,12 @@ public class ProductController
 
     @GetMapping("/public/products")
     public ResponseEntity<ProductResponse> getAllProducts(
-            @RequestParam(name = "pageNumber", required = false) Integer pageNumber,
-            @RequestParam(name = "pageSize", required = false) Integer pageSize)
+            @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
+            @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
+            @RequestParam(value = "sortBy", defaultValue = AppConstants.SORT_BY, required = false) String sortBy,
+            @RequestParam(value = "sortDir", defaultValue = AppConstants.SORT_DIR, required = false) String sortDir)
     {
-        int number = pageNumber == null ? 0 : pageNumber;
-        int size = pageSize == null ? 10 : pageSize;
-
-        ProductResponse productResponse = productService.getAllProducts(number, size);
+        ProductResponse productResponse = productService.getAllProducts(pageNumber, pageSize, sortBy, sortDir);
         return new ResponseEntity<ProductResponse>(productResponse, HttpStatus.OK);
     }
 
