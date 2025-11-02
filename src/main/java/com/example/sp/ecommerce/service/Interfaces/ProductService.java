@@ -8,10 +8,11 @@ import java.util.List;
 
 public interface ProductService
 {
-    ProductResponse getAllProducts(Integer pageNumber, Integer pageSize, String sortBy, String sortDir);
-    ProductDTO getProductById(Long id);
-    String addProduct(List<Product> products);
-    ProductDTO updateProduct(ProductDTO productDTO, Long id);
-    String removeProduct(Long id);
+    String addProducts(List<ProductDTO> productDTOs);
+    String addProduct(ProductDTO productDTO);
+//    ProductResponse getAllProducts(Integer pageNumber, Integer pageSize, String sortBy, String sortDir);
+//    ProductDTO getProductById(Long id);
+//    ProductDTO updateProduct(ProductDTO productDTO, Long id);
+//    String removeProduct(Long id);
 
 }

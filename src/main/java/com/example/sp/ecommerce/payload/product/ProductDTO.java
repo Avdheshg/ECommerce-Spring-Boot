@@ -1,7 +1,7 @@
 package com.example.sp.ecommerce.payload.product;
 
+import com.example.sp.ecommerce.model.Category;
 import com.example.sp.ecommerce.model.Product;
-import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -21,20 +21,34 @@ public class ProductDTO
 
     @NotNull
     @Positive
-    private Double amount;
+    private Double price;
 
     @NotNull
-    private Long categoryId;
+    private Integer quantity;
 
-    @NotNull
-    private Integer stockQuantity;
+    @NotBlank
+    private String description;
+    private double discount;
+    @NotBlank
+    private String image;
+
+    private double specialPrice;
+
+    private Category category;
+//    @NotNull
+//    private Long sellerId;
 
     public ProductDTO(Product product)
     {
         this.id = product.getId();
         this.name = product.getName();
-        this.amount = product.getAmount();
-        this.categoryId = product.getCategoryId();
-        this.stockQuantity = product.getStockQuantity();
+        this.price = product.getPrice();
+        this.quantity = product.getQuantity();
+        this.description = product.getDescription();
+        this.discount = product.getDiscount();
+        this.image = product.getImage();
+        this.specialPrice = product.getSpecialPrice();
     }
 }
+
+// Compare this version with the course and make it working
