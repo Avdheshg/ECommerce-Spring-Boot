@@ -47,27 +47,24 @@ public class ProductServiceImpl implements ProductService
         return "Product added successfully!";
     }
 
-    // Made the above endpoint working
-    // Need to make the List<Product> endpoint working ie adding multiple products working with ProductDTOs so that we can send the product ids with each Product inside the list
+    @Override
+    public ProductResponse getAllProducts(Integer pageNumber, Integer pageSize, String sortBy, String sortDir)
+    {
+        Sort sort = SortUtils.getValidSort(sortBy, sortDir, allowedFieldsForSorting);
 
-//
-//    @Override
-//    public ProductResponse getAllProducts(Integer pageNumber, Integer pageSize, String sortBy, String sortDir)
-//    {
-//        Sort sort = SortUtils.getValidSort(sortBy, sortDir, allowedFieldsForSorting);
-//
-//        Pageable pageDetails = PageRequest.of(pageNumber, pageSize, sort);
-//        Page<Product> productPage =productRepository.findAll(pageDetails);
-//
-//        List<Product> products = productPage.getContent();
-//
-//        if (products.isEmpty())
-//        {
-//            throw new ResourceNotFoundException("No Products present!!");
-//        }
-//
-//        return getProductResponseFromProducts(products, productPage);
-//    }
+        Pageable pageDetails = PageRequest.of(pageNumber, pageSize, sort);
+        Page<Product> productPage = productRepository.findAll(pageDetails);
+
+        List<Product> products = productPage.getContent();
+
+        if (products.isEmpty())
+        {
+            throw new ResourceNotFoundException("No Products present!!");
+        }
+
+        return getProductResponseFromProducts(products, productPage);
+    }
+
 //
 //    @Override
 //    public ProductDTO getProductById(Long productId)
@@ -128,17 +125,15 @@ public class ProductServiceImpl implements ProductService
 
         return product;
     }
-//
-//    public ProductResponse getProductResponseFromProducts(List<Product> products, Page<Product> productPage)
-//    {
-//        List<ProductDTO> productsDTOs = new ArrayList<>();
-//
-//        productsDTOs = products.stream()
-//                .map(product -> new ProductDTO(product.getId(), product.getName(), product.getPrice(), product.getCategoryId(), product.getQuantity()))
-//                .toList();
-//
-//        return new ProductResponse(productPage.getTotalElements(), productPage.getNumber(), productPage.getSize(), productPage.getTotalPages(), productPage.isLast(), productsDTOs);
-//
-//    }
+
+    public ProductResponse getProductResponseFromProducts(List<Product> products, Page<Product> productPage)
+    {
+        List<ProductDTO> productsDTOs = products.stream()
+                .map(product -> new ProductDTO(product))
+                .toList();
+
+        return new ProductResponse(productPage.getTotalElements(), productPage.getNumber(), productPage.getSize(), productPage.getTotalPages(), productPage.isLast(), productsDTOs);
+
+    }
 
 }

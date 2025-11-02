@@ -41,16 +41,16 @@ public class ProductController
         return new ResponseEntity<>(result, HttpStatus.CREATED);
     }
 //
-//    @GetMapping("/public/products")
-//    public ResponseEntity<ProductResponse> getAllProducts(
-//            @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
-//            @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
-//            @RequestParam(value = "sortBy", defaultValue = AppConstants.SORT_BY, required = false) String sortBy,
-//            @RequestParam(value = "sortDir", defaultValue = AppConstants.SORT_DIR, required = false) String sortDir)
-//    {
-//        ProductResponse productResponse = productService.getAllProducts(pageNumber, pageSize, sortBy, sortDir);
-//        return new ResponseEntity<ProductResponse>(productResponse, HttpStatus.OK);
-//    }
+    @GetMapping("/public/products")
+    public ResponseEntity<ProductResponse> getAllProducts(
+            @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
+            @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
+            @RequestParam(value = "sortBy", defaultValue = AppConstants.SORT_BY, required = false) String sortBy,
+            @RequestParam(value = "sortDir", defaultValue = AppConstants.SORT_DIR, required = false) String sortDir)
+    {
+        ProductResponse productResponse = productService.getAllProducts(pageNumber, pageSize, sortBy, sortDir);
+        return new ResponseEntity<ProductResponse>(productResponse, HttpStatus.OK);
+    }
 //
 //    @GetMapping("/public/products/{productId}")
 //    public ResponseEntity<ProductDTO> getProduct(@PathVariable Long productId)

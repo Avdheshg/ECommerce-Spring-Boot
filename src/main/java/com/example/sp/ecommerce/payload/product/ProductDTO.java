@@ -34,7 +34,7 @@ public class ProductDTO
 
     private double specialPrice;
 
-    private Category category;
+    private transient Category category;
 //    @NotNull
 //    private Long sellerId;
 
@@ -48,6 +48,7 @@ public class ProductDTO
         this.discount = product.getDiscount();
         this.image = product.getImage();
         this.specialPrice = product.getSpecialPrice();
+        this.category = product.getCategory();
     }
 }
 
