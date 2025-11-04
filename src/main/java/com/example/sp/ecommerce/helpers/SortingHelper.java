@@ -1,11 +1,11 @@
-package com.example.sp.ecommerce.util;
+package com.example.sp.ecommerce.helpers;
 
 import com.example.sp.ecommerce.config.AppConstants;
 import org.springframework.data.domain.Sort;
 
 import java.util.List;
 
-public class SortUtils
+public class SortingHelper
 {
     public static String validateSortField(String sortBy, List<String> allowedField)
     {

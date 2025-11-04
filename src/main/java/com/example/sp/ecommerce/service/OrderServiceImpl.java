@@ -5,7 +5,7 @@ import com.example.sp.ecommerce.payload.order.OrderDTO;
 import com.example.sp.ecommerce.payload.order.OrderResponse;
 import com.example.sp.ecommerce.respositories.OrderRepository;
 import com.example.sp.ecommerce.service.Interfaces.OrderService;
-import com.example.sp.ecommerce.util.SortUtils;
+import com.example.sp.ecommerce.helpers.SortingHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -37,7 +37,7 @@ public class OrderServiceImpl implements OrderService
     @Override
     public OrderResponse getAllOrders(Integer pageNumber, Integer pageSize, String sortBy, String sortDir)
     {
-        Sort sort = SortUtils.getValidSort(sortBy, sortDir, allowedFieldsForSorting);
+        Sort sort = SortingHelper.getValidSort(sortBy, sortDir, allowedFieldsForSorting);
 
         Pageable pageDetails = PageRequest.of(pageNumber, pageSize, sort);
         Page<Order> orderPage = orderRepository.findAll(pageDetails);

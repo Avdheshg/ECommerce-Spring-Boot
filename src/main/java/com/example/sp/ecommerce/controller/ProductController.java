@@ -3,27 +3,25 @@ package com.example.sp.ecommerce.controller;
 import com.example.sp.ecommerce.config.AppConstants;
 import com.example.sp.ecommerce.payload.product.ProductDTO;
 import com.example.sp.ecommerce.payload.product.ProductResponse;
+import com.example.sp.ecommerce.service.Interfaces.CategoryService;
 import com.example.sp.ecommerce.service.ProductServiceImpl;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
-
-import com.example.sp.ecommerce.model.Product;
 
 @RestController
 @RequestMapping("/api/v1")
 public class ProductController
 {
-    private final ProductServiceImpl productService;
+    @Autowired
+    private ProductServiceImpl productService;
 
-    public ProductController(ProductServiceImpl productService)
-    {
-        this.productService = productService;
-    }
+    @Autowired
+    private CategoryService categoryService;
 
     @PostMapping("/public/products")
     public ResponseEntity<String> addProducts(@Valid @RequestBody List<ProductDTO> productDTOs)
@@ -51,6 +49,19 @@ public class ProductController
         ProductResponse productResponse = productService.getAllProducts(pageNumber, pageSize, sortBy, sortDir);
         return new ResponseEntity<ProductResponse>(productResponse, HttpStatus.OK);
     }
+
+    @GetMapping("/public/category/{categoryId}/products")
+    public ResponseEntity<ProductResponse> getProductsByCategory(
+            @PathVariable Long categoryId,
+            @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
+            @RequestParam(name = "PageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
+            @RequestParam(name = "sortBy", defaultValue = AppConstants.SORT_BY, required = false) String sortBy,
+            @RequestParam(name = "sortDir", defaultValue = AppConstants.SORT_DIR, required = false) String sortDir)
+    {
+        ProductResponse productResponse = productService.getProductsByCategory(categoryId, pageNumber, pageSize, sortBy, sortDir);
+        return new ResponseEntity<>(productResponse, HttpStatus.OK);
+    }
+
 //
 //    @GetMapping("/public/products/{productId}")
 //    public ResponseEntity<ProductDTO> getProduct(@PathVariable Long productId)

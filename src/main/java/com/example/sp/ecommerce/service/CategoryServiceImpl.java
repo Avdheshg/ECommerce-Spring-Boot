@@ -1,13 +1,12 @@
 package com.example.sp.ecommerce.service;
 
-import com.example.sp.ecommerce.config.AppConstants;
 import com.example.sp.ecommerce.exceptions.ResourceNotFoundException;
 import com.example.sp.ecommerce.model.Category;
 import com.example.sp.ecommerce.payload.category.CategoryDTO;
 import com.example.sp.ecommerce.payload.category.CategoryResponse;
 import com.example.sp.ecommerce.respositories.CategoryRepository;
 import com.example.sp.ecommerce.service.Interfaces.CategoryService;
-import com.example.sp.ecommerce.util.SortUtils;
+import com.example.sp.ecommerce.helpers.SortingHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -37,7 +36,7 @@ public class CategoryServiceImpl implements CategoryService
     @Override
     public CategoryResponse getAllCategories(Integer pageNumber, Integer pageSize, String sortBy, String sortDir)
     {
-        Sort sort = SortUtils.getValidSort(sortBy, sortDir, allowedFieldsForSorting);
+        Sort sort = SortingHelper.getValidSort(sortBy, sortDir, allowedFieldsForSorting);
 
         Pageable pageDetails = PageRequest.of(pageNumber, pageSize, sort);
         Page<Category> categoriesPage = categoryRepository.findAll(pageDetails);
