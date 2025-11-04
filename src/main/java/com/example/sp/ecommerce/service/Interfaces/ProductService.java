@@ -16,3 +16,5 @@ public interface ProductService
 //    String removeProduct(Long id);
 
 }
+
+- GetAll
