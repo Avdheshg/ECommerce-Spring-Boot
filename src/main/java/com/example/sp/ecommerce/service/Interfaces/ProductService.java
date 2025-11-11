@@ -9,12 +9,13 @@ public interface ProductService
 {
     String addProducts(List<ProductDTO> productDTOs);
     String addProduct(ProductDTO productDTO);
+
     ProductResponse getAllProducts(Integer pageNumber, Integer pageSize, String sortBy, String sortDir);
     ProductResponse getProductsByCategory(Long categoryId, Integer pageNumber, Integer pageSize, String sortBy, String sortDir);
-//    ProductDTO getProductById(Long id);
+    ProductDTO getProductById(Long id);
+    ProductResponse getProductsByKeyword(String keyword, Integer pageNumber, Integer pageSize, String sortBy, String sortDir);
+
 //    ProductDTO updateProduct(ProductDTO productDTO, Long id);
 //    String removeProduct(Long id);
 
 }
-
-- GetAll

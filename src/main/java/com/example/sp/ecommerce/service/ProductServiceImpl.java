@@ -1,6 +1,7 @@
 package com.example.sp.ecommerce.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.example.sp.ecommerce.exceptions.ResourceNotFoundException;
 import com.example.sp.ecommerce.helpers.PaginationHelper;
@@ -11,12 +12,9 @@ import com.example.sp.ecommerce.payload.product.ProductResponse;
 import com.example.sp.ecommerce.respositories.CategoryRepository;
 import com.example.sp.ecommerce.respositories.ProductRepository;
 import com.example.sp.ecommerce.service.Interfaces.ProductService;
-import com.example.sp.ecommerce.helpers.SortingHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -76,26 +74,47 @@ public class ProductServiceImpl implements ProductService
 
         List<Product> products = productsPage.getContent();
 
+        if (products.isEmpty())
+        {
+            throw new ResourceNotFoundException("Product", "Category", categoryId);
+        }
+
         return getProductResponseFromProducts(products, productsPage);
     }
 
 
+    @Override
+    public ProductDTO getProductById(Long productId)
+    {
+        Optional<Product> optionalProduct = productRepository.findById(productId);
 
-//
-//    @Override
-//    public ProductDTO getProductById(Long productId)
-//    {
-//        Optional<Product> optionalProduct = productRepository.findById(productId);
-//
-//        if (optionalProduct.isPresent())
-//        {
-//            return new ProductDTO(optionalProduct.get());
-//        }
-//        else
-//        {
-//            throw new ResourceNotFoundException("Product", "Id", productId);
-//        }
-//    }
+        if (optionalProduct.isEmpty())
+        {
+            throw new ResourceNotFoundException("Product", "Id", productId);
+        }
+
+        return new ProductDTO(optionalProduct.get());
+    }
+
+    @Override
+    public ProductResponse getProductsByKeyword(String keyword, Integer pageNumber, Integer pageSize, String sortBy, String sortDir) {
+
+        Pageable pageDetails = PaginationHelper.buildPageable(pageNumber, pageSize, sortBy, sortDir, allowedFieldsForSorting);
+
+        String pattern = "%" + keyword + "%";
+
+        Page<Product> productsPage = productRepository.findByNameIgnoreCaseLike(pattern, pageDetails);
+
+        List<Product> products = productsPage.getContent();
+
+        if (products.isEmpty())
+        {
+            throw new ResourceNotFoundException("Product", "Name", keyword);
+        }
+
+        return getProductResponseFromProducts(products, productsPage);
+    }
+
 //
 //    @Override
 //    public ProductDTO updateProduct(ProductDTO productDTO, Long productId)
@@ -151,6 +170,7 @@ public class ProductServiceImpl implements ProductService
         return new ProductResponse(productPage.getTotalElements(), productPage.getNumber(), productPage.getSize(), productPage.getTotalPages(), productPage.isLast(), productsDTOs);
 
     }
+
 
 
 }

@@ -2,6 +2,7 @@ package com.example.sp.ecommerce.payload.product;
 
 import com.example.sp.ecommerce.model.Category;
 import com.example.sp.ecommerce.model.Product;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -34,7 +35,9 @@ public class ProductDTO
 
     private double specialPrice;
 
-    private transient Category category;
+//    @Valid
+    private Category category;
+
 //    @NotNull
 //    private Long sellerId;
 
