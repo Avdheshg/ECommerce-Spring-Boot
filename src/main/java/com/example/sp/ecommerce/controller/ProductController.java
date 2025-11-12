@@ -46,6 +46,7 @@ public class ProductController
             @RequestParam(value = "sortBy", defaultValue = AppConstants.SORT_BY, required = false) String sortBy,
             @RequestParam(value = "sortDir", defaultValue = AppConstants.SORT_DIR, required = false) String sortDir)
     {
+        System.out.println("** getAllProducts **");
         ProductResponse productResponse = productService.getAllProducts(pageNumber, pageSize, sortBy, sortDir);
         return new ResponseEntity<ProductResponse>(productResponse, HttpStatus.OK);
     }
@@ -84,15 +85,22 @@ public class ProductController
         return new ResponseEntity<>(productResponse, HttpStatus.OK);
     }
 
+    @PutMapping("/admin/products/{productId}")
+    public ResponseEntity<ProductDTO> updateProduct(@RequestBody ProductDTO productDTO, @PathVariable Long productId)
+    {
+        System.out.println("** updateProduct **");
+        ProductDTO updatedProduct = productService.updateProduct(productDTO, productId);
+        return new ResponseEntity<>(updatedProduct, HttpStatus.OK);
+    }
 
+    @DeleteMapping("/admin/products/{productId}")
+    public ResponseEntity<String> removeProduct(@PathVariable Long productId)
+    {
+        System.out.println("** removeProduct **");
+        String response = productService.removeProduct(productId);
+        return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
+    }
 
-//
-//    @PutMapping("/public/products/{productId}")
-//    public ResponseEntity<ProductDTO> updateProduct(@RequestBody ProductDTO product, @PathVariable Long productId)
-//    {
-//        ProductDTO productDTO = productService.updateProduct(product, productId);
-//        return new ResponseEntity<>(productDTO, HttpStatus.OK);
-//    }
 //
 //    @DeleteMapping("/admin/products/{productId}")
 //    public ResponseEntity<String> deleteProduct(@PathVariable Long productId)

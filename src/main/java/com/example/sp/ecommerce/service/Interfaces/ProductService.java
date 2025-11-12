@@ -15,7 +15,9 @@ public interface ProductService
     ProductDTO getProductById(Long id);
     ProductResponse getProductsByKeyword(String keyword, Integer pageNumber, Integer pageSize, String sortBy, String sortDir);
 
-//    ProductDTO updateProduct(ProductDTO productDTO, Long id);
-//    String removeProduct(Long id);
+    ProductDTO updateProduct(ProductDTO productDTO, Long productId);
+
+    String removeProduct(Long id);
+
 
 }

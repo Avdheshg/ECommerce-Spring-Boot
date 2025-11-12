@@ -29,7 +29,7 @@ public class ProductDTO
 
     @NotBlank
     private String description;
-    private double discount;
+    private Double discount;
     @NotBlank
     private String image;
 

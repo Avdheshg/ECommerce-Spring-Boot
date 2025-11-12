@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @Service
 public class ProductServiceImpl implements ProductService
@@ -47,9 +48,6 @@ public class ProductServiceImpl implements ProductService
     @Override
     public ProductResponse getAllProducts(Integer pageNumber, Integer pageSize, String sortBy, String sortDir)
     {
-//        Sort sort = SortingHelper.getValidSort(sortBy, sortDir, allowedFieldsForSorting);
-//        Pageable pageDetails = PageRequest.of(pageNumber, pageSize, sort);
-
         Pageable pageDetails = PaginationHelper.buildPageable(pageNumber, pageSize, sortBy, sortDir, allowedFieldsForSorting);
         Page<Product> productsPage = productRepository.findAll(pageDetails);
 
@@ -86,14 +84,10 @@ public class ProductServiceImpl implements ProductService
     @Override
     public ProductDTO getProductById(Long productId)
     {
-        Optional<Product> optionalProduct = productRepository.findById(productId);
+        Product foundProduct = productRepository.findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException("Product", "Id", productId));
 
-        if (optionalProduct.isEmpty())
-        {
-            throw new ResourceNotFoundException("Product", "Id", productId);
-        }
-
-        return new ProductDTO(optionalProduct.get());
+        return new ProductDTO(foundProduct);
     }
 
     @Override
@@ -115,30 +109,59 @@ public class ProductServiceImpl implements ProductService
         return getProductResponseFromProducts(products, productsPage);
     }
 
-//
-//    @Override
-//    public ProductDTO updateProduct(ProductDTO productDTO, Long productId)
-//    {
-//        ProductDTO foundProductDTO = getProductById(productId);
-//
-//        foundProductDTO.setName(productDTO.getName());
-//        productRepository.save(getProductFromDTO(foundProductDTO));
-//
-//        return foundProductDTO;
-//    }
-//
-//    @Override
-//    public String removeProduct(Long productId)
-//    {
-//        productRepository.deleteById(productId);
-//
-//        return "Product with the Id: " + productId + " successfully deleted!";
-//    }
-//
-//    public Product getProductFromDTO(ProductDTO productDTO)
-//    {
-//        return new Product(productDTO.getId(), productDTO.getName(), productDTO.getPrice(), productDTO.getCategoryId(), productDTO.getQuantity());
-//    }
+
+    @Override
+    public ProductDTO updateProduct(ProductDTO productDTO, Long productId)
+    {
+        Product foundProduct = productRepository.findById(productId)
+                        .orElseThrow(() -> new ResourceNotFoundException("Product", "Id", productId));
+
+        updateEntityFromDTO(productDTO, foundProduct);          // productMapper.updateEntityFromDTO
+
+        productRepository.save(foundProduct);
+
+        return getProductDTOFromProduct(foundProduct);
+    }
+
+    private void updateEntityFromDTO(ProductDTO productDTO, Product foundProduct)
+    {
+        if (productDTO.getCategory().getName().isBlank() == false)
+            foundProduct.getCategory().setName(productDTO.getCategory().getName());
+
+        if (productDTO.getPrice() != null)
+            foundProduct.setPrice(productDTO.getPrice());
+
+        if (productDTO.getQuantity() != null)
+            foundProduct.setQuantity(productDTO.getQuantity());
+
+        if (productDTO.getDescription().isBlank() == false)
+            foundProduct.setDescription(productDTO.getDescription());
+
+        if (productDTO.getDiscount() != null)
+            foundProduct.setDiscount(productDTO.getDiscount());
+
+    }
+
+    @Override
+    public String removeProduct(Long productId)
+    {
+        getProductById(productId);
+
+        productRepository.deleteById(productId);
+
+        return "Product with the Id: " + productId + " successfully deleted!";
+    }
+
+
+    public Product getProductFromDTO(ProductDTO productDTO)
+    {
+        return new Product(productDTO);
+    }
+
+    public ProductDTO getProductDTOFromProduct(Product product)
+    {
+        return new ProductDTO(product);
+    }
 
     public List<Product> getProductsFromDTOs(List<ProductDTO> productDTOs)
     {
