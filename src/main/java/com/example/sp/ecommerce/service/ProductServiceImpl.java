@@ -1,6 +1,13 @@
 package com.example.sp.ecommerce.service;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
+import java.util.UUID;
 import java.util.Optional;
 
 import com.example.sp.ecommerce.exceptions.ResourceNotFoundException;
@@ -17,6 +24,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class ProductServiceImpl implements ProductService
@@ -152,6 +160,49 @@ public class ProductServiceImpl implements ProductService
         return "Product with the Id: " + productId + " successfully deleted!";
     }
 
+    public ProductDTO updateProductImage(Long productId, MultipartFile image) throws IOException {
+        Product productEntity = productRepository.findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException("Product", "Id", productId));
+
+        String uploadDir = "images";
+
+        String uploadedFileName = uploadImage(uploadDir, image);
+
+        productEntity.setImage(uploadedFileName);
+        Product updatedProduct = productRepository.save(productEntity);
+
+        return getProductDTOFromProduct(updatedProduct);
+    }
+    /*
+    * Test this image upload functionality
+    * */
+
+    private String uploadImage(String path, MultipartFile file) throws IOException {
+        String fileName = generateMultipartFileName(file);
+
+        ensureDirectoryExists(path);
+
+        Path target = Paths.get(path, fileName);
+        Files.copy(file.getInputStream(), target, StandardCopyOption.REPLACE_EXISTING);
+
+        return fileName;
+    }
+
+    private String generateMultipartFileName(MultipartFile file)
+    {
+        String originalFileName = file.getOriginalFilename();
+        int dotIndex = originalFileName.lastIndexOf('.');
+        String extension = (dotIndex != -1) ? originalFileName.substring(dotIndex) : "";
+        String uuid = UUID.randomUUID().toString();
+        return uuid + extension;
+    }
+
+    private void ensureDirectoryExists(String path)
+    {
+        File folder = new File(path);
+        if (folder.exists() == false)
+            folder.mkdir();
+    }
 
     public Product getProductFromDTO(ProductDTO productDTO)
     {
@@ -193,7 +244,6 @@ public class ProductServiceImpl implements ProductService
         return new ProductResponse(productPage.getTotalElements(), productPage.getNumber(), productPage.getSize(), productPage.getTotalPages(), productPage.isLast(), productsDTOs);
 
     }
-
 
 
 }
